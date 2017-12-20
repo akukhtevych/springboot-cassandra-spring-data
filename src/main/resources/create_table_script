@@ -1,0 +1,3 @@
+
+CREATE KEYSPACE IF NOT EXISTS hla WITH replication = {'class': 'SimpleStrategy', 'replication_factor': '1'}  AND durable_writes = true;
+CREATE TABLE IF NOT EXISTS hla.transactions (id timeuuid,time timestamp,issuer_account int,recipient_account int,value float,PRIMARY KEY (id));

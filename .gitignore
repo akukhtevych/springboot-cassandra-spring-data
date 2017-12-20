@@ -1,0 +1,9 @@
+# Exclude idea folder and generated sources
+.idea/
+*.iml
+*.class0
+*.jar
+/target
+
+out
+idea-module-files
