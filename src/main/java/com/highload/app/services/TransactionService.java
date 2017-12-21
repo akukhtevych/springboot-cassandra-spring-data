@@ -2,6 +2,7 @@ package com.highload.app.services;
 
 import com.highload.app.models.TransactionData;
 import com.highload.app.repositories.TransactionsDataRepository;
+import org.jasypt.util.text.BasicTextEncryptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.cassandra.repository.support.BasicMapId;
 import org.springframework.stereotype.Service;
@@ -19,7 +20,7 @@ public class TransactionService {
         return repository.save(data);
     }
 
-    public TransactionData findOne(UUID id, final String user) {
+    public TransactionData findOne(UUID id) {
         return repository.findOne(BasicMapId.id("id", id));
     }
 
@@ -43,5 +44,27 @@ public class TransactionService {
 
     public void deleteAll() {
         repository.deleteAll();
+    }
+
+    public static TransactionData encrypt(String key, TransactionData data){
+        if(data != null) {
+            BasicTextEncryptor textEncryptor = new BasicTextEncryptor();
+            textEncryptor.setPassword(key);
+            data.setIssuerAccount(textEncryptor.encrypt(data.getIssuerAccount()));
+            data.setRecipientAccount(textEncryptor.encrypt(data.getRecipientAccount()));
+            data.setValue(textEncryptor.encrypt(data.getValue()));
+        }
+        return data;
+    }
+
+    public static TransactionData decrypt(String key, TransactionData data){
+        if(data != null) {
+            BasicTextEncryptor textEncryptor = new BasicTextEncryptor();
+            textEncryptor.setPassword(key);
+            data.setIssuerAccount(textEncryptor.decrypt(data.getIssuerAccount()));
+            data.setRecipientAccount(textEncryptor.decrypt(data.getRecipientAccount()));
+            data.setValue(textEncryptor.decrypt(data.getValue()));
+        }
+        return data;
     }
 }

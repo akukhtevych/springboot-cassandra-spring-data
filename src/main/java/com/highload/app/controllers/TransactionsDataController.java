@@ -19,6 +19,7 @@ public class TransactionsDataController extends BaseController {
 
     @RequestMapping(value = "/transaction_data", method = RequestMethod.POST, produces = "application/json")
     public ResponseEntity<Object> save(@RequestBody TransactionData data) {
+        if(data.getKey() != null) TransactionService.encrypt(data.getKey(), data);
         TransactionData one = service.save(data);
         return new ResponseEntity<>(one, HttpStatus.CREATED);
     }
@@ -28,14 +29,15 @@ public class TransactionsDataController extends BaseController {
         return new ResponseEntity<>(service.findAll(), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/transaction_data/id/{id}", method = RequestMethod.GET, produces = "application/json")
-    public ResponseEntity<Object> findOne(@PathVariable UUID id, @PathVariable String user) {
-        TransactionData transactionData = service.findOne(id,user);
+    @RequestMapping(value = "/transaction_data/id/{id}/key/{key}", method = RequestMethod.GET, produces = "application/json")
+    public ResponseEntity<Object> findOne(@PathVariable UUID id, @PathVariable String key) {
+        TransactionData transactionData = service.findOne(id);
+        if(key != null) TransactionService.decrypt(key, transactionData);
         return new ResponseEntity<>(transactionData == null ? Collections.EMPTY_MAP : transactionData, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/transaction_data/id/{id}", method = RequestMethod.DELETE, produces = "application/json")
-    public ResponseEntity<Object> delete(@PathVariable UUID id, @PathVariable String user) {
+    public ResponseEntity<Object> delete(@PathVariable UUID id) {
         service.delete(id);
         return new ResponseEntity<>(Collections.EMPTY_MAP, HttpStatus.OK);
     }

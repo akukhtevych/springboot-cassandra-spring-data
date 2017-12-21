@@ -1,7 +1,10 @@
 package com.highload.app.models;
 
 import com.datastax.driver.core.utils.UUIDs;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.cassandra.core.PrimaryKeyType;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.cassandra.mapping.Column;
 import org.springframework.data.cassandra.mapping.PrimaryKeyColumn;
 import org.springframework.data.cassandra.mapping.Table;
@@ -19,17 +22,22 @@ public class TransactionData {
     private Date time = new java.util.Date();
 
     @Column(value = "issuer_account")
-    private int issuerAccount;
+    private String issuerAccount;
 
     @Column(value = "recipient_account")
-    private int recipientAccount;
+    private String recipientAccount;
 
     @Column(value = "value")
-    private float value;
+    private String value;
+
+    @Transient
+    @JsonIgnore
+    @JsonProperty(value = "key")
+    private String key;
 
     public TransactionData() { };
 
-    public TransactionData(UUID id, Date time, int issuerAccount, int recipientAccount, float value) {
+    public TransactionData(UUID id, Date time, String issuerAccount, String recipientAccount, String value) {
         this.id = id;
         this.time = time;
         this.issuerAccount = issuerAccount;
@@ -53,27 +61,36 @@ public class TransactionData {
         this.time = time;
     }
 
-    public int getIssuerAccount() {
+    public String getIssuerAccount() {
         return issuerAccount;
     }
 
-    public void setIssuerAccount(int issuerAccount) {
+    public void setIssuerAccount(String issuerAccount) {
         this.issuerAccount = issuerAccount;
     }
 
-    public int getRecipientAccount() {
+    public String getRecipientAccount() {
         return recipientAccount;
     }
 
-    public void setRecipientAccount(int recipientAccount) {
+    public void setRecipientAccount(String recipientAccount) {
         this.recipientAccount = recipientAccount;
     }
 
-    public float getValue() {
+    public String getValue() {
         return value;
     }
 
-    public void setValue(float value) {
+    public void setValue(String value) {
         this.value = value;
+    }
+
+    @JsonIgnore
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
     }
 }
